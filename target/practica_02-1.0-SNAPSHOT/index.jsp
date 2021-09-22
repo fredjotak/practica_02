@@ -36,7 +36,7 @@
                     <tr>
                         <td><%=item.getId()%></td>
                         <td><%=item.getTitulo()%></td>
-                        <td><%=item.getPrioridad()%></td>
+                        <td><%=item.getPrioridad().getTipo()%></td>
                         <td><a class="casilla <%=(item.isCompletado())?"casilla-marcada": ""%>" href="MainController?id=<%=item.getId()%>&op=completar"></a></td>
                         <td><a class="color-azul" href="MainController?id=<%=item.getId()%>&op=editar">Editar</a></td>
                         <td><a class="color-rojo" href="MainController?id=<%=item.getId()%>&op=eliminar">Eliminar</a></td>

@@ -1,6 +1,9 @@
+<%@page import="java.util.ArrayList"%>
+<%@page import="com.emergentes.modelo.Prioridad"%>
 <%@page import="com.emergentes.modelo.Tarea"%>
 <%
     Tarea tarea = (Tarea)request.getAttribute("miTarea");
+    ArrayList<Prioridad> listaPrioridades = (ArrayList<Prioridad>)session.getAttribute("listaPrioridades");
 %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -25,9 +28,13 @@
                         <br>
                         <label for="cbPrioridad">Prioridad:</label>
                         <select name="cbPrioridad" id="cbPrioridad">
-                            <option value="Baja" <%=tarea.getPrioridad().equals("Baja")? "selected": ""%> >Baja</option>
-                            <option value="Media" <%=tarea.getPrioridad().equals("Media")? "selected": ""%> >Media</option>
-                            <option value="Alta" <%=tarea.getPrioridad().equals("Alta")? "selected": ""%> >Alta</option>
+                            <%
+                                for(Prioridad prio: listaPrioridades){
+                            %>
+                            <option value="<%=prio.getId()%>" <%=tarea.getPrioridad().getTipo().equals(prio.getTipo())? "selected": ""%> ><%=prio.getTipo()%></option>
+                            <%
+                                }
+                            %>
                         </select>
                         <input type="hidden" name="hdnCompletado" value="<%=tarea.isCompletado()%>">
                     </div>

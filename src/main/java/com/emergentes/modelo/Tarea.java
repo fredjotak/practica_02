@@ -3,13 +3,13 @@ package com.emergentes.modelo;
 public class Tarea {
     private int id;
     private String titulo;
-    private String prioridad;
+    private Prioridad prioridad;
     private boolean completado;
     
     public Tarea(){
         this.id = 0;
         this.titulo = "";
-        this.prioridad = "";
+        this.prioridad = new Prioridad();
         this.completado = false;
     }
 
@@ -29,11 +29,11 @@ public class Tarea {
         this.titulo = titulo;
     }
 
-    public String getPrioridad() {
+    public Prioridad getPrioridad() {
         return prioridad;
     }
 
-    public void setPrioridad(String prioridad) {
+    public void setPrioridad(Prioridad prioridad) {
         this.prioridad = prioridad;
     }
 

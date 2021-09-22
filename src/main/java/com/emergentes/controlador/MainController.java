@@ -1,8 +1,8 @@
 package com.emergentes.controlador;
 
+import com.emergentes.modelo.Prioridad;
 import com.emergentes.modelo.Tarea;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,13 +22,21 @@ public class MainController extends HttpServlet {
         if(sesion.getAttribute("listaTareas")==null){
             sesion.setAttribute("listaTareas", new ArrayList<Tarea>());
         }
+        if(sesion.getAttribute("listaPrioridades")==null){
+            ArrayList<Prioridad> listaPriorAux = new ArrayList<Prioridad>();
+            listaPriorAux.add(new Prioridad(1, "Baja"));
+            listaPriorAux.add(new Prioridad(2, "Media"));
+            listaPriorAux.add(new Prioridad(3, "Alta"));
+            // Cargamos las prioridades
+            sesion.setAttribute("listaPrioridades", listaPriorAux);
+        }
         
         ArrayList<Tarea> listaTareas = (ArrayList<Tarea>)sesion.getAttribute("listaTareas");
+        
         String op = request.getParameter("op");
         String opcion = op!=null? op: "vista";
         Tarea tarea = new Tarea();
         int id, posicion;
-        System.out.println(opcion);
         switch(opcion){
             case "nuevo":
                 request.setAttribute("miTarea", tarea);
@@ -67,14 +75,20 @@ public class MainController extends HttpServlet {
             throws ServletException, IOException {
         HttpSession sesion = request.getSession();
         ArrayList<Tarea> listaTareas = (ArrayList<Tarea>)sesion.getAttribute("listaTareas");
+        ArrayList<Prioridad> listaPrioridades = (ArrayList<Prioridad>)sesion.getAttribute("listaPrioridades");
         
         Tarea tarea = new Tarea();
         
         tarea.setId(Integer.parseInt(request.getParameter("hdnId")));
         tarea.setTitulo(request.getParameter("txtNombreTarea"));
-        tarea.setPrioridad(request.getParameter("cbPrioridad"));
+         // Por defecto el completado se mantiene, por defecto no está completado
         tarea.setCompletado(Boolean.parseBoolean(request.getParameter("hdnCompletado")));
-        // Por defecto el completado se mantiene, por defecto no está completado
+        try {
+            int idActual = buscarIndicePrioridad(request, Integer.parseInt(request.getParameter("cbPrioridad")));
+            tarea.setPrioridad(listaPrioridades.get(idActual));
+        } catch(Exception e){
+            tarea.setPrioridad(listaPrioridades.get(0)); // Si ocurre un error poner el primero
+        }
         
         int idActual = tarea.getId();
         if(idActual==0){
@@ -105,15 +119,26 @@ public class MainController extends HttpServlet {
         }
         return i;
     }
+    private int buscarIndicePrioridad(HttpServletRequest request, int id){
+        HttpSession sesion = request.getSession();
+        ArrayList<Prioridad> lista = (ArrayList<Prioridad>)sesion.getAttribute("listaPrioridades");
+        int i = 0;
+        if(lista.size() > 0){
+            while (i<lista.size()){
+                if (lista.get(i).getId() == id){
+                    break;
+                } else {
+                    i++;
+                }
+            }
+        }
+        return i;
+    }
     
     private int ultimoId(HttpServletRequest request){
         HttpSession sesion = request.getSession();
         ArrayList<Tarea> lista = (ArrayList<Tarea>)sesion.getAttribute("listaTareas");
         int idAux = 0;
-        /*
-        for(Tarea tareas: lista){
-            idAux = tareas.getId();
-        }*/
         if( lista.size() > 0){
             idAux = lista.get(lista.size()-1).getId();
         }
